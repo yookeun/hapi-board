@@ -1,4 +1,6 @@
 node_modules
 .Ds_Store
 .idea
-
+.vscode
+public/dist
+.log
