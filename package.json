@@ -12,6 +12,7 @@
     "gulp": "^3.9.1",
     "gulp-concat": "^2.6.0",
     "gulp-html-replace": "^1.5.5",
+    "gulp-nodemon": "^2.0.6",
     "gulp-uglify": "^1.5.3"
   },
   "dependencies": {
@@ -19,6 +20,6 @@
     "hapi": "^13.0.0",
     "inert": "^3.2.0",
     "path": "^0.12.7",
-    "semantic-ui": "^2.1.8"
+    "vision": "^4.0.1"
   }
 }

@@ -5,7 +5,7 @@
 var gulp = require('gulp');
 var uglify = require('gulp-uglify');
 var concat = require('gulp-concat');
-
+var nodemon = require('gulp-nodemon');
 
 var src = 'public/src/';
 var dist = 'public/dist/';
@@ -33,6 +33,15 @@ gulp.task('compress', function() {
  */
 gulp.task('watch', function() {
     gulp.watch(src+'js/*.js', ['compress']);
+});
+
+
+gulp.task('start', function() {
+    nodemon({
+      script: 'server.js',
+      ext: 'js html',
+      env: {'NODE_ENV':'development'}
+    })
 });
 
 /**
