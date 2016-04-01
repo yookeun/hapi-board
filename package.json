@@ -16,8 +16,10 @@
     "gulp-uglify": "^1.5.3"
   },
   "dependencies": {
+    "boom": "^3.1.2",
     "handlebars": "^4.0.5",
     "hapi": "^13.0.0",
+    "hapi-mongodb": "^6.0.0",
     "inert": "^3.2.0",
     "path": "^0.12.7",
     "vision": "^4.0.1"
