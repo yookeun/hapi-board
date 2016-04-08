@@ -1,26 +1,27 @@
 
-<form class="ui form">
+<!--<form class="ui form" id="boardForm" method="post" action="/add">-->
+<form class="ui form" id="boardForm">
   <div class="field">
     <label>이름</label>
-    <input type="text" name="last-name" placeholder="이름을 입력하세요">
+    <input type="text" name="name" id="name" placeholder="이름을 입력하세요">
   </div>
   <div class="inline fields">
     <div class="field">
         <div class="ui radio checkbox">
-          <input type="radio" name="frequency" checked="checked">
+          <input type="radio" name="gender" id="genderM" checked="checked" value="M">
           <label>남성</label>
         </div>
       </div>
       <div class="field">
         <div class="ui radio checkbox">
-          <input type="radio" name="frequency">
+          <input type="radio" name="gender" id="genderF" value="F">
           <label>여성</label>
         </div>
       </div>
   </div>
   <div class="field">
     <label>직업</label>
-    <select class="ui search dropdown">
+    <select class="ui search dropdown" name="occupation" id="occupation">
       <option value="">직업을 선택하세요</option>
       <option value="AF">회사원</option>
       <option value="AX">학생</option>
@@ -34,11 +35,11 @@
   </div>
   <div class="field">
     <label>제목</label>
-    <input type="text" name="first-name" placeholder="제목을 입력하세요">
+    <input type="text" name="title" id="title" placeholder="제목을 입력하세요">
   </div>
   <div class="field">
     <label>내용</label>
-    <textarea></textarea>
+    <textarea name="content" id="content"></textarea>
   </div>
   <div class="field">
     <div class="ui checkbox">
@@ -46,5 +47,43 @@
       <label>I agree to the Terms and Conditions</label>
     </div>
   </div>
-  <button class="ui button" type="submit">Submit</button>
+  <button class="ui button" type="button" id="submit">Submit</button>
 </form>
+
+<script>
+
+$('#submit').click(function() {
+  var hapiboard = {
+    name: $('#name').val(),
+    gender: $('input[type="radio"]:checked').val(),
+    occupation: $('#occupation').val(),
+    title: $('#title').val(),
+    content: $('#content').val()
+  };
+  $.ajax({
+    type: 'POST',
+    dataType: 'JSON',
+    url: '/add',
+    data: JSON.stringify(hapiboard),
+    contentType : "application/json; charset=UTF-8",
+    error: function(error) {
+      var err = JSON.parse(error.responseText);
+      alert("["+err.statusCode+"] " + err.message);
+      /*
+      console.log(err);
+      console.log("err.statusCode==="+err.statusCode);
+      console.log("err.statusCode==="+err.message);
+      */
+
+    },
+    success: function(response) {
+      if (response.statusCode === 200) {
+        alert("저장성공");
+        location.href = '/list';
+      }
+    }
+  });
+  //event.preventDefault();
+});
+
+</script>

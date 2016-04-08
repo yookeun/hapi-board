@@ -1,61 +1,57 @@
 
+<div class="ui fluid action input">
+  <input type="text" placeholder="Search..." id="title">
+  <div class="ui button" id="searchBtn">Search</div>
+</div>
+
 <table class="ui striped table">
   <thead>
     <tr>
+      <th>Title</th>
       <th>Name</th>
-      <th>Date Joined</th>
-      <th>E-mail</th>
-      <th>Called</th>
+      <th>Gender</th>
+      <th>Occupation</th>
     </tr>
   </thead>
-  <tbody>
+
+  <tbody id="hapiboardList">
+    <script id="entry-template" type="text/x-handlebars-template">
+    {{#each hapiboards}}
     <tr>
-      <td>John Lilki</td>
-      <td>September 14, 2013</td>
-      <td>jhlilk22@yahoo.com</td>
-      <td>No</td>
+      <td>{{title}}</td>
+      <td>{{name}}</td>
+      <td>{{gender}}</td>
+      <td>{{occupation}}</td>
     </tr>
-    <tr>
-      <td>Jamie Harington</td>
-      <td>January 11, 2014</td>
-      <td>jamieharingonton@yahoo.com</td>
-      <td>Yes</td>
-    </tr>
-    <tr>
-      <td>Jill Lewis</td>
-      <td>May 11, 2014</td>
-      <td>jilsewris22@yahoo.com</td>
-      <td>Yes</td>
-    </tr>
-    <tr>
-      <td>John Lilki</td>
-      <td>September 14, 2013</td>
-      <td>jhlilk22@yahoo.com</td>
-      <td>No</td>
-    </tr>
-    <tr>
-      <td>John Lilki</td>
-      <td>September 14, 2013</td>
-      <td>jhlilk22@yahoo.com</td>
-      <td>No</td>
-    </tr>
-    <tr>
-      <td>Jamie Harington</td>
-      <td>January 11, 2014</td>
-      <td>jamieharingonton@yahoo.com</td>
-      <td>Yes</td>
-    </tr>
-    <tr>
-      <td>Jill Lewis</td>
-      <td>May 11, 2014</td>
-      <td>jilsewris22@yahoo.com</td>
-      <td>Yes</td>
-    </tr>
-    <tr>
-      <td>John Lilki</td>
-      <td>September 14, 2013</td>
-      <td>jhlilk22@yahoo.com</td>
-      <td>No</td>
-    </tr>
+    {{/each}}
+    </script>
   </tbody>
+
 </table>
+<script>
+
+  var source   = $("#entry-template").html();
+  var template = Handlebars.compile(source);
+  $('#hapiboardList').append(template);
+
+  $('#searchBtn').click(function(){
+
+      var search = {
+        title : $('#title').val()
+      }
+
+      $.ajax({
+        type: 'GET',
+        dataType: 'JSON',
+        contentType : "application/json; charset=UTF-8",
+        url: '/list/'+search.title,
+        error: function() {
+        },
+        success: function(response) {
+            console.log("success");
+        }
+      });
+  });
+
+
+</script>

@@ -5,6 +5,7 @@ const Path = require('path');
 const Inert = require('inert');
 const Boom = require('boom');
 const Mongodb = require('hapi-mongodb');
+const Joi = require('joi');
 
 const server = new Hapi.Server({
   connections: {
@@ -53,7 +54,7 @@ server.register(require('vision'), (err) => {
     path: 'public/views',
     layoutPath: 'public/views/layout',
     layout: 'layout',
-    partialsPath: 'public/views/partials'
+    partialsPath: 'public/views/partials',
   })
 });
 
@@ -90,12 +91,39 @@ server.route({
 */
 server.route({
   method: 'GET',
-  path: '/list',
+  path: '/list/{title?}',
   handler: function(request, reply) {
-    var data = {
-      header: '리스트'
+    var param = {};
+    if(typeof(request.params.title) != 'undefined') {
+      param = {
+        "title": request.params.title
+      };
     }
-    reply.view('board/list', data)
+    console.log(param);
+
+    var db = request.server.plugins['hapi-mongodb'].db;
+    db.collection('hapiboard').find().toArray(function(err, document) {
+      var hapiboards = [];
+      for (var i in document) {
+        var hapiboard = {
+          id: document[i]._id,
+          name: document[i].name,
+          gender: document[i].gender,
+          occupation: document[i].occupation,
+          title: document[i].title,
+          content: document[i].content
+        };
+        hapiboards.push(hapiboard);
+      }
+      //reply({hapiboards:hapiboards});
+      var data = {
+        header: '리스트',
+        hapiboards: hapiboards
+      }
+
+      reply.view('board/list', data);
+      //reply(data);
+    });
   }
 });
 
@@ -123,19 +151,44 @@ server.route({
   handler: function(request, reply) {
     var db = request.server.plugins['hapi-mongodb'].db;
     var hapiboardForm = {
-      "name" : request.payload.name,
-      "gender" : request.payload.gender,
-      "occupation": request.payload.occupation,
-      "title": request.payload.title,
-      "content": request.payload.content
+      name : request.payload.name,
+      gender : request.payload.gender,
+      occupation: request.payload.occupation,
+      title: request.payload.title,
+      content: request.payload.content
     };
+
+    /*
+    console.log("name = " + hapiboardForm.name);
+    console.log("gender = " + hapiboardForm.gender);
+    console.log("occupation = " + hapiboardForm.occupation);
+    console.log("title = " + hapiboardForm.title);
+    console.log("content = " + hapiboardForm.content);
+    */
+
     db.collection('hapiboard').insert(hapiboardForm, {w:1}, function(err) {
       if (err) {
         return reply(Boom.internal('Internal Database Error',err));
       } else {
-        reply();
+        console.log("success!");
+        var result = {
+          statusCode:200,
+          messages:"success"
+        }
+        reply(result);
       }
     });
+  },
+  config: {
+    validate: {
+      payload: {
+        name: Joi.string().min(3).max(10),
+        gender: Joi.string().required(),
+        occupation: Joi.string().required(),
+        title: Joi.string().min(2),
+        content: Joi.string().min(2)
+      }
+    }
   }
 });
 
