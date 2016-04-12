@@ -14,8 +14,8 @@
     </tr>
   </thead>
 
+  <script id="entry-template" type="text/x-handlebars-template">
   <tbody id="hapiboardList">
-    <script id="entry-template" type="text/x-handlebars-template">
     {{#each hapiboards}}
     <tr>
       <td>{{title}}</td>
@@ -24,15 +24,15 @@
       <td>{{occupation}}</td>
     </tr>
     {{/each}}
-    </script>
   </tbody>
+  </script>
 
 </table>
 <script>
 
   var source   = $("#entry-template").html();
   var template = Handlebars.compile(source);
-  $('#hapiboardList').append(template);
+  //$('#hapiboardList').html(template);
 
   $('#searchBtn').click(function(){
 
@@ -41,14 +41,24 @@
       }
 
       $.ajax({
-        type: 'GET',
+        type: 'POST',
         dataType: 'JSON',
         contentType : "application/json; charset=UTF-8",
         url: '/list/'+search.title,
         error: function() {
         },
         success: function(response) {
-            console.log("success");
+            $('#hapiboardList').html(template(response.hapiboards));
+              /*
+              $('#hapiboardList').empty();
+              $.each(response.hapiboards, function(i, hapiboard) {
+                console.log(template(response.hapiboard));
+                $('#hapiboardList').append(template(hapiboard));
+              });
+
+
+              //$('#hapiboardList').append(template(response.hapiboards));
+              */
         }
       });
   });

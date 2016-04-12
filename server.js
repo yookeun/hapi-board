@@ -86,20 +86,25 @@ server.route({
 });
 
 
-/*
-  리스트 페이지
-*/
 server.route({
   method: 'GET',
-  path: '/list/{title?}',
+  path: '/list',
   handler: function(request, reply) {
-    var param = {};
-    if(typeof(request.params.title) != 'undefined') {
-      param = {
-        "title": request.params.title
-      };
+    var data = {
+      header: '리스트'
     }
-    console.log(param);
+    reply.view('board/list', data);
+  }
+})
+
+
+/*
+  리스트 페이지
+
+server.route({
+  method: 'GET',
+  path: '/list',
+  handler: function(request, reply) {
 
     var db = request.server.plugins['hapi-mongodb'].db;
     db.collection('hapiboard').find().toArray(function(err, document) {
@@ -120,9 +125,53 @@ server.route({
         header: '리스트',
         hapiboards: hapiboards
       }
-
       reply.view('board/list', data);
       //reply(data);
+    });
+  }
+});
+*/
+
+/*
+  리스트 페이지
+*/
+server.route({
+  method: 'POST',
+  path: '/list/{title?}',
+  handler: function(request, reply) {
+    var param = {};
+    if(typeof(request.params.title) != 'undefined') {
+      param = {
+        "title": request.params.title
+      };
+    }
+    console.log(param);
+
+    var db = request.server.plugins['hapi-mongodb'].db;
+    db.collection('hapiboard').find(param).toArray(function(err, document) {
+      var hapiboards = [];
+      for (var i in document) {
+        var hapiboard = {
+          id: document[i]._id,
+          name: document[i].name,
+          gender: document[i].gender,
+          occupation: document[i].occupation,
+          title: document[i].title,
+          content: document[i].content
+        };
+        hapiboards.push(hapiboard);
+      }
+
+      console.log("hapiboards.length === " + hapiboards.length);
+      //reply({hapiboards:hapiboards});
+      var data = {
+        header: '리스트',
+        hapiboards: hapiboards,
+        success: true
+      }
+
+      //reply.view('board/list', data);
+      reply(data);
     });
   }
 });
