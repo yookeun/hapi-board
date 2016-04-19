@@ -86,67 +86,41 @@ server.route({
 });
 
 
-server.route({
-  method: 'GET',
-  path: '/list',
-  handler: function(request, reply) {
-    var data = {
-      header: '리스트'
-    }
-    reply.view('board/list', data);
-  }
-})
-
-
 /*
-  리스트 페이지
-
+  기본 페이지
+*/
 server.route({
   method: 'GET',
-  path: '/list',
-  handler: function(request, reply) {
+  path: '/test',
+  handler: function (request, reply) {
 
-    var db = request.server.plugins['hapi-mongodb'].db;
-    db.collection('hapiboard').find().toArray(function(err, document) {
-      var hapiboards = [];
-      for (var i in document) {
-        var hapiboard = {
-          id: document[i]._id,
-          name: document[i].name,
-          gender: document[i].gender,
-          occupation: document[i].occupation,
-          title: document[i].title,
-          content: document[i].content
-        };
-        hapiboards.push(hapiboard);
-      }
-      //reply({hapiboards:hapiboards});
-      var data = {
-        header: '리스트',
-        hapiboards: hapiboards
-      }
-      reply.view('board/list', data);
-      //reply(data);
-    });
+    var data = {
+      title: "Hello, Test!",
+      users: [
+        {number: 1, name:"kim1", age:20},
+        {number: 2, name:"kim2", age:21},
+        {number: 3, name:"kim3", age:22}
+      ]
+    }
+
+    reply.view('test',data);
   }
 });
-*/
 
 /*
   리스트 페이지
 */
 server.route({
-  method: 'POST',
+  method: 'GET',
   path: '/list/{title?}',
   handler: function(request, reply) {
-    var param = {};
-    if(typeof(request.params.title) != 'undefined') {
-      param = {
-        "title": request.params.title
-      };
+    var param =  request.params.title;
+    if (typeof(param) == 'undefined') {
+      param = {};
+    } else {
+      param = JSON.parse(param);
     }
-    console.log(param);
-
+    //console.log("param === " + param);
     var db = request.server.plugins['hapi-mongodb'].db;
     db.collection('hapiboard').find(param).toArray(function(err, document) {
       var hapiboards = [];
@@ -161,17 +135,12 @@ server.route({
         };
         hapiboards.push(hapiboard);
       }
-
-      console.log("hapiboards.length === " + hapiboards.length);
-      //reply({hapiboards:hapiboards});
       var data = {
         header: '리스트',
-        hapiboards: hapiboards,
-        success: true
+        hapiboards: hapiboards
       }
-
-      //reply.view('board/list', data);
-      reply(data);
+      // /console.log("data.hapiboards=="+JSON.stringify(data.hapiboards));
+      reply.view('board/list', data);
     });
   }
 });

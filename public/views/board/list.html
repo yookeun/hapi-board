@@ -1,8 +1,11 @@
 
+
+
 <div class="ui fluid action input">
   <input type="text" placeholder="Search..." id="title">
   <div class="ui button" id="searchBtn">Search</div>
 </div>
+
 
 <table class="ui striped table">
   <thead>
@@ -13,9 +16,7 @@
       <th>Occupation</th>
     </tr>
   </thead>
-
-  <script id="entry-template" type="text/x-handlebars-template">
-  <tbody id="hapiboardList">
+  <tbody>
     {{#each hapiboards}}
     <tr>
       <td>{{title}}</td>
@@ -25,43 +26,22 @@
     </tr>
     {{/each}}
   </tbody>
-  </script>
-
 </table>
 <script>
-
-  var source   = $("#entry-template").html();
-  var template = Handlebars.compile(source);
-  //$('#hapiboardList').html(template);
-
   $('#searchBtn').click(function(){
+    var param = {
+      title: $('#title').val()
+    };
 
-      var search = {
-        title : $('#title').val()
+    $.ajax({
+      type: 'GET',
+      //dataType: 'JSON',
+      //data: JSON.stringify(param),
+      url: '/list/'+JSON.stringify(param),
+      //contentType : "application/json; charset=UTF-8",
+      success:function(response){        
       }
+    });
 
-      $.ajax({
-        type: 'POST',
-        dataType: 'JSON',
-        contentType : "application/json; charset=UTF-8",
-        url: '/list/'+search.title,
-        error: function() {
-        },
-        success: function(response) {
-            $('#hapiboardList').html(template(response.hapiboards));
-              /*
-              $('#hapiboardList').empty();
-              $.each(response.hapiboards, function(i, hapiboard) {
-                console.log(template(response.hapiboard));
-                $('#hapiboardList').append(template(hapiboard));
-              });
-
-
-              //$('#hapiboardList').append(template(response.hapiboards));
-              */
-        }
-      });
   });
-
-
 </script>
