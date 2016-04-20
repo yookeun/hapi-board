@@ -115,6 +115,7 @@ server.route({
   path: '/list/{title?}',
   handler: function(request, reply) {
     var param =  request.params.title;
+    //검색조건값이 없다면 전체를 나오게 한다.
     if (typeof(param) == 'undefined') {
       param = {};
     } else {
@@ -137,13 +138,16 @@ server.route({
       }
       var data = {
         header: '리스트',
-        hapiboards: hapiboards
-      }
-      // /console.log("data.hapiboards=="+JSON.stringify(data.hapiboards));
+        hapiboards: hapiboards,
+        success: true,
+        title: param.title
+      }      
       reply.view('board/list', data);
     });
   }
 });
+
+
 
 
 /*
@@ -175,14 +179,6 @@ server.route({
       title: request.payload.title,
       content: request.payload.content
     };
-
-    /*
-    console.log("name = " + hapiboardForm.name);
-    console.log("gender = " + hapiboardForm.gender);
-    console.log("occupation = " + hapiboardForm.occupation);
-    console.log("title = " + hapiboardForm.title);
-    console.log("content = " + hapiboardForm.content);
-    */
 
     db.collection('hapiboard').insert(hapiboardForm, {w:1}, function(err) {
       if (err) {

@@ -2,7 +2,7 @@
 
 
 <div class="ui fluid action input">
-  <input type="text" placeholder="Search..." id="title">
+  <input type="text" placeholder="Search..." id="title" value="{{title}}">
   <div class="ui button" id="searchBtn">Search</div>
 </div>
 
@@ -32,16 +32,6 @@
     var param = {
       title: $('#title').val()
     };
-
-    $.ajax({
-      type: 'GET',
-      //dataType: 'JSON',
-      //data: JSON.stringify(param),
-      url: '/list/'+JSON.stringify(param),
-      //contentType : "application/json; charset=UTF-8",
-      success:function(response){        
-      }
-    });
-
+    location.href = '/list/'+encodeURIComponent(JSON.stringify(param));
   });
 </script>
